@@ -104,7 +104,6 @@ USAR A VARIÁVEL GLOBAL dados2018 DAQUI PRA FRENTE IRÁ ZERAR AS QUESTÕES
 #######################################################################
 '''
 
-
 def nome_do_time(dados, id_numerica):
     if(dados['equipes'][id_numerica]) != None:
         return dados['equipes'][id_numerica]['nome-comum']
@@ -244,22 +243,16 @@ def dicionario_id_estadio_e_nro_jogos(dados):
     '''
 
 
-def busca_imprecisa_por_nome_de_time(dados, nome_parcial_time):
-    '''Função que recebe o dicionário de dados e o nome parcial de um time e
-    retorna uma lista com os IDs dos times que corresponderem ao nome
-
-    Essa função implementa uma busca "fuzzy", isto é, queremos procurar por 'Fla'
-    e achar o flamengo. Ou por 'Paulo' e achar o São Paulo.
-
-    Nessa busca, a função recebe um nome, e verifica os campos
-        'nome-comum', 'nome-slug', 'sigla' e 'nome',
-    adicionando à lista de retorno os times que tiverem o nome parcial
-    contido em um dos campos.
-
-    Caso não seja encontrado nenhuma time correspondente,
-    retorna uma lista vazia
-    '''
-    pass
+def busca_imprecisa_por_nome_de_time(dados, nome_parcial):
+    resultados = []
+    for id_time, info_time in dados['equipes'].items():
+        if (nome_parcial.lower() in info_time['nome-comum'].lower() or
+            nome_parcial.lower() in info_time['nome-slug'].lower() or
+            nome_parcial.lower() in info_time['sigla'].lower() or
+            nome_parcial.lower() in info_time['nome'].lower()):
+            resultados.append(id_time)
+    return resultados
+    
 
 
 def ids_de_jogos_de_um_time(dados, time_id):
@@ -333,26 +326,31 @@ def time_que_fez_mais_gols(dados):
 
 def rebaixados(dados):
     criterios = dados['fases']['2700']['faixas-classificacao']['classifica3']['faixa']
-    criterios = criterios.split()
-    classifica = dados['fases']['2700']['classificacao']['grupo']['Único']
+    lista_crit = str(criterios).split('-')
+    lista = []
+    for i in range(int(lista_crit[0])-1, int(lista_crit[1])):
+        lista.append(dados['fases']['2700']['classificacao']['grupo']['Único'][i])
+    
+    return lista
     
     '''Função que recebe o dicionário de dados e
     retorna uma lista com as IDs dos times rebaixados para a série B
     '''
 
-print(rebaixados(dados2018))
-print(rebaixados(dados2018))
+
 
 def classificacao_do_time_por_id(dados, time_id):
-    if(dados['fases']['2700']['classificacao']['grupo']['único']):
-        print("!")
+    classificacao = dados['fases']['2700']['classificacao']['grupo']['Único']
+    for i in classificacao:
+        if i == time_id:
+            return classificacao.index(i) + 1
+    else:
+        return "nao encontrado"
     '''Função que recebe o dicionario de dados e uma ID de time e
     retorna a classificacao desse time no campeonato.
 
     Se a ID não for válida, retorna a string 'nao encontrado'
     '''
-    
-
 
 class TestStringMethods(unittest.TestCase):
     def test_000_nome_do_time(self):
@@ -481,14 +479,14 @@ class TestStringMethods(unittest.TestCase):
         estadios = dicionario_id_estadio_e_nro_jogos(dados)
         self.assertEqual(estadios['72'], 17)
 
-    # def test_014_busca_imprecisa_por_nome_de_time(self):
-    #     dados = pega_dados()
-    #     ids_times = busca_imprecisa_por_nome_de_time(dados, 'Paulo')
-    #     self.assertTrue('24' in ids_times)
-    #     ids_times = busca_imprecisa_por_nome_de_time(dados, 'SPA')
-    #     self.assertTrue('24' in ids_times)
-    #     ids_times = busca_imprecisa_por_nome_de_time(dados, 'anto')
-    #     self.assertTrue('22' in ids_times)
+    def test_014_busca_imprecisa_por_nome_de_time(self):
+        dados = pega_dados()
+        ids_times = busca_imprecisa_por_nome_de_time(dados, 'Paulo')
+        self.assertTrue('24' in ids_times)
+        ids_times = busca_imprecisa_por_nome_de_time(dados, 'SPA')
+        self.assertTrue('24' in ids_times)
+        ids_times = busca_imprecisa_por_nome_de_time(dados, 'anto')
+        self.assertTrue('22' in ids_times)
 
     def test_015_ids_de_jogos_de_um_time(self):
         dados = pega_dados()
@@ -572,3 +570,5 @@ def run_tests():
 
 if __name__ == '__main__':
     run_tests()
+
+print("Jonathan Mateus S. de Moraes - SI3A")
