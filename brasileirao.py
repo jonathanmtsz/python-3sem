@@ -164,7 +164,7 @@ def nomes_classificados_libertadores(dados):
 
 def ids_dos_times_de_um_jogo(dados, id_jogo):
     info_jogo = dados['fases']['2700']['jogos']['id'][id_jogo]
-    times_jogando = {info_jogo['time1'], info_jogo['time2']}
+    times_jogando = (info_jogo['time1'], info_jogo['time2'])
     return times_jogando
     '''Função que recebe o dicionário de dados do brasileirão e a ID de um jogo e
     retorna uma tupla com as IDs dos dois times participantes no jogo
