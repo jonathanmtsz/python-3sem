@@ -4,15 +4,9 @@ dados = {"alunos":[
                    {"nome":"lucas","id":15},
                    {"nome":"cicero","id":29},
                   ], 
-        "professores":[
-                    {"nome": "prof", "id" : 0}
-            ]
         }
 
 class AlunoNaoEncontrado(Exception):
-    pass
-
-class ProfNaoEncontrado(Exception):
     pass
 
 def aluno_por_id(id_aluno):
