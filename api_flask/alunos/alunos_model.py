@@ -1,20 +1,26 @@
-#dados, exceçoes, tudo que não seja rota!
+from config import db
+class Aluno(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
 
-dados = {"alunos":[
-                   {"nome":"lucas","id":15},
-                   {"nome":"cicero","id":29},
-                  ], 
-        }
+    def __init__(self, nome):
+        self.nome = nome
+
+    def to_dict(self):
+        return {'id':self.id,'nome':self.nome}
 
 class AlunoNaoEncontrado(Exception):
     pass
 
 def aluno_por_id(id_aluno):
-    lista_alunos = dados['alunos']
-    for dicionario in lista_alunos:
-        if dicionario['id'] == id_aluno:
-            return dicionario
-    raise AlunoNaoEncontrado
+    aluno = Aluno.query.get(id_aluno)
+    if not aluno:
+        raise AlunoNaoEncontrado
+    return aluno.to_dict()
+
+def lista_alunos():
+    aluno = Aluno.query.all()
+    return [aluno.to_dict() for aluno in alunos]
 
 def aluno_existe(id_aluno):
     try:
@@ -25,9 +31,6 @@ def aluno_existe(id_aluno):
 
 def adiciona_aluno(dict):
     dados['alunos'].append(dict)
-
-def lista_alunos():
-    return dados["alunos"]
 
 def apaga_tudo():
     dados['alunos'] = []
