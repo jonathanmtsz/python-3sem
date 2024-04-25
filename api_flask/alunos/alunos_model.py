@@ -19,7 +19,7 @@ def aluno_por_id(id_aluno):
     return aluno.to_dict()
 
 def lista_alunos():
-    aluno = Aluno.query.all()
+    alunos = Aluno.query.all()
     return [aluno.to_dict() for aluno in alunos]
 
 def aluno_existe(id_aluno):
@@ -29,16 +29,23 @@ def aluno_existe(id_aluno):
     except AlunoNaoEncontrado:
         return False
 
-def adiciona_aluno(dict):
-    dados['alunos'].append(dict)
+def adiciona_aluno(dados_novo):
+    novo = Aluno(nome = dados_novo['nome'])
+    db.session.add(novo)
+    db.session.commit()
 
 def apaga_tudo():
     dados['alunos'] = []
 
 def apaga_aluno(id_aluno):
-    dici_aluno = aluno_por_id(id_aluno)
-    dados['alunos'].remove(dici_aluno)
+    aluno = Aluno.query.get(id_aluno)
+    if not aluno:
+        raise AlunoNaoEncontrado
+    db.session.delete(id_aluno)
 
 def edita_aluno(id_aluno,novo_nome):
-    dici_aluno = aluno_por_id(id_aluno)
-    dici_aluno['nome'] = novo_nome
+    aluno = Aluno.query.get(id_aluno)
+    if not aluno:
+        raise AlunoNaoEncontrado
+    aluno.nome = novo_nome['nome']
+    db.session.commit()

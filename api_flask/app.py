@@ -1,5 +1,5 @@
 import os
-from config import app
+from config import app, db
 from post.index import posts
 from alunos.alunos_routes import alunos_blueprint
 from prof.prof_routes import prof_blueprint
